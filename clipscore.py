@@ -132,6 +132,66 @@ def extract_all_images(images, model, device, batch_size=64, num_workers=8):
     return all_image_features
 
 
+def get_clip_score_cosine(model, images, candidates, device, w=2.5):
+    '''
+    get standard image-text clipscore using actual cosine similarity
+    as opposed to taking the dot product.
+    
+    images can either be:
+    - a list of strings specifying filepaths for images
+    - a precomputed, ordered matrix of image features
+    '''
+    if isinstance(images, list):
+        # need to extract image features
+        images = extract_all_images(images, model, device)
+
+    candidates = extract_all_captions(candidates, model, device)
+
+    #as of numpy 1.21, normalize doesn't work properly for float16
+    if version.parse(np.__version__) < version.parse('1.21'):
+        images = sklearn.preprocessing.normalize(images, axis=1)
+        candidates = sklearn.preprocessing.normalize(candidates, axis=1)
+    else:
+        warnings.warn(
+            'due to a numerical instability, new numpy normalization is slightly different than paper results. '
+            'to exactly replicate paper results, please use numpy version less than 1.21, e.g., 1.20.3.')
+        images = images / np.sqrt(np.sum(images**2, axis=1, keepdims=True))
+        candidates = candidates / np.sqrt(np.sum(candidates**2, axis=1, keepdims=True))
+
+    # we divide by the cardinality of both vectors
+    per = w*np.clip(np.sum(images * candidates, axis=1)/ (len(images) * len(candidates)), 0, None)
+    
+    return np.mean(per), per, candidates
+
+
+def get_clip_score_euclid(model, images, candidates, device, w=2.5): 
+    '''
+    get standard image-text clipscore using Euclidean distance. 
+    images can either be:
+    - a list of strings specifying filepaths for images
+    - a precomputed, ordered matrix of image features
+    '''
+    if isinstance(images, list):
+        # need to extract image features
+        images = extract_all_images(images, model, device)
+
+    candidates = extract_all_captions(candidates, model, device)
+
+    #as of numpy 1.21, normalize doesn't work properly for float16
+    if version.parse(np.__version__) < version.parse('1.21'):
+        images = sklearn.preprocessing.normalize(images, axis=1)
+        candidates = sklearn.preprocessing.normalize(candidates, axis=1)
+    else:
+        warnings.warn(
+            'due to a numerical instability, new numpy normalization is slightly different than paper results. '
+            'to exactly replicate paper results, please use numpy version less than 1.21, e.g., 1.20.3.')
+        images = images / np.sqrt(np.sum(images**2, axis=1, keepdims=True))
+        candidates = candidates / np.sqrt(np.sum(candidates**2, axis=1, keepdims=True))
+
+    # negating Euclidean distance so that 
+    per = w*np.clip(-np.sum(images**2 - candidates**2, axis=1), 0, None)
+    return np.mean(per), per, candidates
+
 def get_clip_score(model, images, candidates, device, w=2.5):
     '''
     get standard image-text clipscore.
