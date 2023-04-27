@@ -293,40 +293,26 @@ def main():
         image_paths, model, device, batch_size=64, num_workers=8)
 
     # get image-text clipscore
-    _, per_instance_image_text, candidate_feats = get_clip_score(
+    _, per_instance_image_text_dot, candidate_feats = get_clip_score(
+        model, image_feats, candidates, device)
+    
+    _, per_instance_image_text_cos, candidate_feats_cos = get_clip_score_cosine(
+        model, image_feats, candidates, device)
+    
+    _, per_instance_image_text_eu, candidate_feats_eu = get_clip_score_euclid(
         model, image_feats, candidates, device)
 
-    if args.references_json:
-        # get text-text clipscore
-        _, per_instance_text_text = get_refonlyclipscore(
-            model, references, candidate_feats, device)
-        # F-score
-        refclipscores = 2 * per_instance_image_text * per_instance_text_text / (per_instance_image_text + per_instance_text_text)
-        scores = {image_id: {'CLIPScore': float(clipscore), 'RefCLIPScore': float(refclipscore)}
-                  for image_id, clipscore, refclipscore in
-                  zip(image_ids, per_instance_image_text, refclipscores)}
-
-    else:
-        scores = {image_id: {'CLIPScore': float(clipscore)}
-                  for image_id, clipscore in
-                  zip(image_ids, per_instance_image_text)}
-        print('CLIPScore: {:.4f}'.format(np.mean([s['CLIPScore'] for s in scores.values()])))
-
-    if args.references_json:
-        if args.compute_other_ref_metrics:
-            other_metrics = generation_eval_utils.get_all_metrics(references, candidates)
-            for k, v in other_metrics.items():
-                if k == 'bleu':
-                    for bidx, sc in enumerate(v):
-                        print('BLEU-{}: {:.4f}'.format(bidx+1, sc))
-                else:
-                    print('{}: {:.4f}'.format(k.upper(), v))
-        print('CLIPScore: {:.4f}'.format(np.mean([s['CLIPScore'] for s in scores.values()])))
-        print('RefCLIPScore: {:.4f}'.format(np.mean([s['RefCLIPScore'] for s in scores.values()])))
-
-    if args.save_per_instance:
-        with open(args.save_per_instance, 'w') as f:
-            f.write(json.dumps(scores))
+    with open("dot_clip.txt", 'w') as output:
+        for row in per_instance_image_text_dot:
+            output.write(str(row) + '\n')
+    
+    with open("cos_clip.txt", 'w') as output:
+        for row in per_instance_image_text_cos:
+            output.write(str(row) + '\n')
+        
+    with open("eu_clip.txt", 'w') as output:
+        for row in per_instance_image_text_eu:
+            output.write(str(row) + '\n')
 
 
 if __name__ == '__main__':
