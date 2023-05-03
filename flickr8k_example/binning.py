@@ -95,9 +95,9 @@ def filter_data(input_json, image_directory):
                 
         percentage.append(counter)
         
-        percentage = np.array(percentage)
-        print(percentage)
-        print(percentage / np.array(likert_score_counts))
+    percentage = np.array(percentage)
+    print(percentage)
+    print(percentage / np.array(likert_score_counts))
                 
     # for i in range(len(likert_score_counts)):
     #     if i == 0:
