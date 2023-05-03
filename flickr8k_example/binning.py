@@ -87,7 +87,6 @@ def filter_data(input_json, image_directory):
         else:
             prev_val = sum(likert_score_counts[:i])
         current_val = sum(likert_score_counts[:i+1])
-        max_val = score_cutt_offs[i]
         
         counter = 0
         for index in arg_sort_scores[int(prev_val): int(current_val)]:
