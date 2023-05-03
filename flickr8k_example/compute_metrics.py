@@ -46,30 +46,21 @@ def compute_human_correlation(input_json, image_directory, tauvariant='c'):
     image_feats = clipscore.extract_all_images(
         images, model, device, batch_size=64, num_workers=8)
 
-    # get image-text clipscore
-    _, per_instance_image_text, candidate_feats = clipscore.get_clip_score(
+    # get image-text clipscore (dot product)
+    _dot, per_instance_image_text_dot, candidate_feats_dot = clipscore.get_clip_score(
+        model, image_feats, candidates, device)
+    
+    # get image-text clipscore (cosine )
+    _cos, per_instance_image_text_cos, candidate_feats_cos = clipscore.get_clip_score_cosine(
         model, image_feats, candidates, device)
 
-    # get text-text clipscore
-    _, per_instance_text_text = clipscore.get_refonlyclipscore(
-            model, refs, candidate_feats, device)
-
     # F-score
-    refclipscores = 2 * per_instance_image_text * per_instance_text_text / (per_instance_image_text + per_instance_text_text)
-    other_metrics = generation_eval_utils.get_all_metrics(refs, candidates, return_per_cap=True)
+    # refclipscores = 2 * per_instance_image_text * per_instance_text_text / (per_instance_image_text + per_instance_text_text)
+    # other_metrics = generation_eval_utils.get_all_metrics(refs, candidates, return_per_cap=True)
 
-    print('CLIPScore Tau-{}: {:.3f}'.format(tauvariant, 100*scipy.stats.kendalltau(per_instance_image_text, human_scores, variant=tauvariant)[0]))
-    print('RefCLIPScore Tau-{}: {:.3f}'.format(tauvariant, 100*scipy.stats.kendalltau(refclipscores, human_scores, variant=tauvariant)[0]))
-
-    for k, v in other_metrics.items():
-        if k == 'bleu':
-            v = v[-1] # just do BLEU-4
-            k = 'bleu-4'
-        if k == 'spice':
-            v = [float(item['All']['f']) for item in v]
-            
-        print('{} Tau-{}: {:.3f}'.format(k, tauvariant, 100*scipy.stats.kendalltau(v, human_scores, variant=tauvariant)[0]))
-
+    print('CLIPScore dot Tau-{}: {:.3f}'.format(tauvariant, 100*scipy.stats.kendalltau(per_instance_image_text_dot, human_scores, variant=tauvariant)[0]))
+    print('CLIPScore cos Tau-{}: {:.3f}'.format(tauvariant, 100*scipy.stats.kendalltau(per_instance_image_text_cos, human_scores, variant=tauvariant)[0]))
+   
 
 def main():
     if not os.path.exists('flickr8k/flickr8k.json'):
