@@ -90,7 +90,7 @@ def filter_data(input_json, image_directory):
         
         counter = 0
         for index in arg_sort_scores[int(prev_val): int(current_val)]:
-            if sample_to_likert[index] == i:
+            if sample_to_likert[index] == i+1:
                 counter += 1
                 
         percentage.append(counter)
