@@ -82,7 +82,7 @@ def filter_data(input_json, image_directory):
             prev_val = 0
         else:
             prev_val = likert_score_counts[i-1]
-        current_val = likert_score_counts[i]
+        current_val = sum(likert_score_counts[:i+1])
         
         max_val = score_cutt_offs[i]
         
