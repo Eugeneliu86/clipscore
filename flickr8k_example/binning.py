@@ -54,7 +54,7 @@ def filter_data(input_json, image_directory):
     likert_score_counts = np.zeros(len(set(human_scores)))
     
     for value in human_scores:
-        likert_score_counts[value-i] +=1
+        likert_score_counts[value-1] +=1
     
     likert_score_percentages = likert_score_counts/np.sum(likert_score_percentages) * 100
     
