@@ -74,6 +74,7 @@ def filter_data(input_json, image_directory):
         score_cutt_offs.append(ranked_scores[int(sum(likert_score_counts[:i+1])-1)])
     
     print(score_cutt_offs)
+    print(likert_score_counts)
     percentage = []
     
     for i in range(len(likert_score_counts)):
