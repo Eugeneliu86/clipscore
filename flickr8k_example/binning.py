@@ -73,7 +73,7 @@ def filter_data(input_json, image_directory):
     for count in likert_score_counts:
         score_cutt_offs.append(ranked_scores[int(count-1)])
     
-    print(ranked_scores)
+    print(score_cutt_offs)
     percentage = np.zeros(len(likert_score_counts))
     
     for i in range(len(likert_score_counts)):
