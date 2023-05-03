@@ -70,19 +70,19 @@ def filter_data(input_json, image_directory):
     
     score_cutt_offs = []
     for count in likert_score_counts:
-        score_cutt_offs.append(count-1)
+        score_cutt_offs.append(ranked_scores[count-1])
         
     percentage = np.zeros(len(likert_score_counts))
     
     for i in range(len(likert_score_counts)):
         if i == 0:
-            prev_val = -1
+            prev_val = 0
         else:
             prev_val = likert_score_counts[i-1]
         current_val = likert_score_counts[i]
         max_val = score_cutt_offs[i]
         
-        for score in ranked_scores[prev_val +1: current_val]:
+        for score in ranked_scores[prev_val: current_val]:
             if score <= max_val:
                 percentage[i] += 1
                 
