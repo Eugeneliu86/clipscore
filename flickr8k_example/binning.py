@@ -57,7 +57,7 @@ def filter_data(input_json, image_directory):
     for value in human_scores:
         likert_score_counts[int(value-1)] +=1
     
-    likert_score_percentages = likert_score_counts/np.sum(likert_score_percentages) * 100
+    likert_score_percentages = likert_score_counts/np.sum(likert_score_counts) * 100
     
     plt.pie(likert_score_percentages, labels=list(range(len(set(human_scores)))),
              autopct='%1.2f%%')
