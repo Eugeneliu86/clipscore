@@ -66,7 +66,11 @@ def filter_data(input_json, image_directory):
     plt.savefig("likert_score_distribution")
     
     # sorting scores and partitioning
+    sample_to_score = dict(zip(range(len(human_scores)), per_instance_image_text_dot))
+    sample_to_likert = dict(zip(range(len(human_scores)), human_scores))
+    
     ranked_scores = np.sort(per_instance_image_text_dot)
+    arg_sort_scores = np.argsort(per_instance_image_text_dot)
     
     print(ranked_scores)
     score_cutt_offs = []
@@ -77,7 +81,7 @@ def filter_data(input_json, image_directory):
     print(likert_score_counts)
     percentage = []
     
-    for i in range(len(likert_score_counts)):
+    for i in range(len(score_cutt_offs)):
         if i == 0:
             prev_val = 0
         else:
@@ -85,17 +89,36 @@ def filter_data(input_json, image_directory):
         current_val = sum(likert_score_counts[:i+1])
         max_val = score_cutt_offs[i]
         
-        print(len(ranked_scores[int(prev_val): int(current_val)]))
-        
         counter = 0
-        for score in ranked_scores[int(prev_val): int(current_val)]:
-            if score <= max_val:
+        for index in arg_sort_scores[int(prev_val): int(current_val)]:
+            if index == i:
                 counter += 1
+                
         percentage.append(counter)
+        
+        percentage = np.array(percentage)
+        print(percentage)
+        print(percentage / np.array(likert_score_counts))
+                
+    # for i in range(len(likert_score_counts)):
+    #     if i == 0:
+    #         prev_val = 0
+    #     else:
+    #         prev_val = sum(likert_score_counts[:i])
+    #     current_val = sum(likert_score_counts[:i+1])
+    #     max_val = score_cutt_offs[i]
+        
+    #     print(len(ranked_scores[int(prev_val): int(current_val)]))
+        
+    #     counter = 0
+    #     for score in ranked_scores[int(prev_val): int(current_val)]:
+    #         if score <= max_val:
+    #             counter += 1
+    #     percentage.append(counter)
     
-    percentage = np.array(percentage)
-    print(percentage)
-    print(percentage / np.array(likert_score_counts))
+    # percentage = np.array(percentage)
+    # print(percentage)
+    # print(percentage / np.array(likert_score_counts))
         
 
 def main():
