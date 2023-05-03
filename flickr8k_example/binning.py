@@ -66,8 +66,9 @@ def filter_data(input_json, image_directory):
     plt.savefig("likert_score_distribution")
     
     # sorting scores and partitioning
-    ranked_scores = per_instance_image_text_dot.sort()
+    ranked_scores = np.sort(per_instance_image_text_dot)
     
+    print(ranked_scores)
     score_cutt_offs = []
     for count in likert_score_counts:
         score_cutt_offs.append(ranked_scores[count-1])
