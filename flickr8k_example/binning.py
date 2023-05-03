@@ -52,7 +52,7 @@ def filter_data(input_json, image_directory):
     # plotting pie chart + percentage of likert score distribution
 
     likert_score_counts = np.zeros(len(set(human_scores)))
-    
+    print(human_scores)
     for value in human_scores:
         likert_score_counts[value-1] +=1
     
