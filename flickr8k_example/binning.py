@@ -83,7 +83,7 @@ def filter_data(input_json, image_directory):
         current_val = likert_score_counts[i]
         max_val = score_cutt_offs[i]
         
-        for score in ranked_scores[prev_val: current_val]:
+        for score in ranked_scores[int(prev_val): int(current_val)]:
             if score <= max_val:
                 percentage[i] += 1
                 
