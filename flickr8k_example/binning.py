@@ -81,9 +81,8 @@ def filter_data(input_json, image_directory):
         if i == 0:
             prev_val = 0
         else:
-            prev_val = likert_score_counts[i-1]
+            prev_val = sum(likert_score_counts[:i])
         current_val = sum(likert_score_counts[:i+1])
-        
         max_val = score_cutt_offs[i]
         
         print(len(ranked_scores[int(prev_val): int(current_val)]))
