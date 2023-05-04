@@ -94,7 +94,7 @@ def filter_data(input_json, image_directory):
             if sample_to_likert[index] == i+1:
                 counter += 1
             else:
-                misclassified[i][sample_to_likert[index] - 1] += 1
+                misclassified[i][int(sample_to_likert[index] - 1)] += 1
                 
             percentage.append(counter)
         
