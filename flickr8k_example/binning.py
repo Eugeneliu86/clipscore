@@ -80,6 +80,7 @@ def filter_data(input_json, image_directory):
     print(score_cutt_offs)
     print(likert_score_counts)
     percentage = []
+    misclassified = np.zeros(len(score_cutt_offs), len(score_cutt_offs))
     
     for i in range(len(score_cutt_offs)):
         if i == 0:
@@ -92,12 +93,17 @@ def filter_data(input_json, image_directory):
         for index in arg_sort_scores[int(prev_val): int(current_val)]:
             if sample_to_likert[index] == i+1:
                 counter += 1
+            else:
+                misclassified[i][sample_to_likert[index] - 1] += 1
                 
-        percentage.append(counter)
+            percentage.append(counter)
         
+        misclassified[i]/len(arg_sort_scores[int(prev_val): int(current_val)])
     percentage = np.array(percentage)
+    
     print(percentage)
     print(percentage / np.array(likert_score_counts))
+    print(misclassified)
                 
     # for i in range(len(likert_score_counts)):
     #     if i == 0:
